@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vault
+  name: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      containers:
+      - image: 'registry.connect.redhat.com/hashicorp/vault:1.9.4-ubi'
+        name: vault
+        ports:
+        - containerPort: 8200
+          name: vaultport
+          protocol: TCP
+        args:
+        - server
+        - -log-level=debug
+        env:
+        - name: SKIP_SETCAP
+          value: 'true'
+        - name: SKIP_CHOWN
+          value: 'true'
+        - name: VAULT_LOCAL_CONFIG
+          value: |
+            {"backend":
+              {"file":
+                {"path": "/vault/file"}
+              },
+              "default_lease_ttl": "168h",
+              "max_lease_ttl": "720h" ,
+              "disable_mlock": true,
+              "listener":
+              { "tcp" :
+                { "address" : "0.0.0.0:8200",
+                "tls_disable": 1}
+              }
+            }
+        volumeMounts:
+        - name: vault-file-backend
+          mountPath: /vault/file
+        livenessProbe:
+          httpGet:
+            path: 'v1/sys/health?standbyok=true&standbycode=200&sealedcode=200&uninitcode=200'
+            port: 8200
+        readinessProbe:
+          httpGet:
+            path: 'v1/sys/health?standbyok=true&standbycode=200&sealedcode=200&uninitcode=200'
+            port: 8200
+      volumes:
+      - name: vault-file-backend
+        emptyDir: {}

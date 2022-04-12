@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myvault
+spec:
+  rules:
+  - host: vault-<userId>.apps.cluster-4zmbp.4zmbp.sandbox688.opentlc.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: vault
+            port: 
+              number: 8200

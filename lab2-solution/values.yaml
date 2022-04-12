@@ -1,0 +1,42 @@
+# Holds values that affect multiple components of the chart.
+global:
+  # Configuration for running this Helm chart on the Red Hat OpenShift platform.
+  # This Helm chart currently supports OpenShift v4.x+.
+  openshift:
+    # If true, the Helm chart will create necessary configuration for running
+    # its components on OpenShift.
+    enabled: true
+  
+  # The name (and tag) of the Consul Docker image for clients and servers.
+  # This can be overridden per component. This should be pinned to a specific
+  # version tag, otherwise you may inadvertently upgrade your Consul version.
+  #
+  # Examples:
+  #
+  # ```yaml
+  # # Consul 1.10.0
+  # image: "consul:1.10.0"
+  # # Consul Enterprise 1.10.0
+  # image: "hashicorp/consul-enterprise:1.10.0-ent"
+  # ```
+  # @default: hashicorp/consul:<latest version>
+  image: registry.connect.redhat.com/hashicorp/consul:1.11.4-ubi
+
+# Values that configure running a Consul client on Kubernetes nodes. 
+client:
+  # If true, the chart will install all
+  # the resources necessary for a Consul client on every Kubernetes node. This _does not_ require
+  # `server.enabled`, since the agents can be configured to join an external cluster.
+  # @default: global.enabled
+  # @type: boolean
+  enabled: false
+
+# Server, when enabled, configures a server cluster to run. This should
+# be disabled if you plan on connecting to a Consul cluster external to
+# the Kube cluster.
+server:
+  # This defines the disk size for configuring the
+  # servers' StatefulSet storage. For dynamically provisioned storage classes, this is the
+  # desired size. For manually defined persistent volumes, this should be set to
+  # the disk size of the attached volume.
+  storage: 500Mi

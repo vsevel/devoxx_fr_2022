@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vault
+  name: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      containers:
+      - image: 'registry.connect.redhat.com/hashicorp/vault:1.9.4-ubi'
+        name: vault
+        ports:
+        - containerPort: 8200
+          name: vaultport
+          protocol: TCP
+        args:
+        - server
+        - -log-level=debug
+        env:
+        - name: SKIP_SETCAP
+          value: 'true'
+        - name: SKIP_CHOWN
+          value: 'true'
+# TODO add VAULT_LOCAL_CONFIG env var here
+        volumeMounts:
+# TODO add a volume mount for file backend here
+        livenessProbe:
+          httpGet:
+            path: 'v1/sys/health?standbyok=true&standbycode=200&sealedcode=200&uninitcode=200'
+            port: 8200
+        readinessProbe:
+          httpGet:
+            path: 'v1/sys/health?standbyok=true&standbycode=200&sealedcode=200&uninitcode=200'
+            port: 8200
+      volumes:
+# TODO add a empty dir volume for file backend here

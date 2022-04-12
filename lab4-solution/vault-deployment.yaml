@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vault
+  name: vault
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 100%
+      maxSurge: 100%
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      containers:
+      - image: 'registry.connect.redhat.com/hashicorp/vault:1.9.4-ubi'
+        name: vault
+        ports:
+        - containerPort: 8200
+          name: vaultport
+          protocol: TCP
+        args:
+        - server
+        - -log-level=debug
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: SKIP_SETCAP
+          value: 'true'
+        - name: SKIP_CHOWN
+          value: 'true'
+        - name: VAULT_LOCAL_CONFIG
+          value: |
+            { 
+              "ui": true,
+              "storage":
+              { "consul":
+                { "address": "consul-consul-server:8500",
+                  "path": "vault"
+                }
+              },
+              "api_addr": "https://$(POD_IP):8200",
+              "cluster_addr ": "https://$(POD_IP):8201",
+              "default_lease_ttl": "168h",
+              "max_lease_ttl": "720h" ,
+              "disable_mlock": true,
+              "listener":
+              { "tcp":
+                { "address" : "0.0.0.0:8200",
+                  "cluster_address": "0.0.0.0:8201",
+                  "tls_disable": 1
+                }
+              }
+            }
+        livenessProbe:
+          httpGet:
+            path: 'v1/sys/health?standbyok=true&standbycode=200&sealedcode=200&uninitcode=200'
+            port: 8200
+        readinessProbe:
+          httpGet:
+            path: 'v1/sys/health?standbyok=true&standbycode=200&uninitcode=200'
+            port: 8200
+      volumes:
+      - name: vault-config-backend
+        emptyDir: {}
