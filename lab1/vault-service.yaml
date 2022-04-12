@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  labels:
+    app: vault
+spec:
+  ports:
+    - name: #TODO name of port
+      port: #TODO port number
+  selector:
+  #TODO key: value
