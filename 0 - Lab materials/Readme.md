@@ -4,6 +4,13 @@
 - helm CLI: `https://helm.sh/docs/intro/install/`
 - jq: `https://stedolan.github.io/jq/download/`
 
+for Mac OS
+```
+brew install openshift-cli
+brew install helm
+brew install jq
+```
+
 Access the openshift console at `https://console-openshift-console.apps.cluster-4zmbp.4zmbp.sandbox688.opentlc.com`
 
 Log your openshift client in openshift cluster
