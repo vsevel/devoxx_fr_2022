@@ -10,7 +10,7 @@ Vault local configuration can be injected via the environment variable VAULT_LOC
 
 reference: https://hub.docker.com/_/vault
 
-Add following configuration to the deployment (file vault-deployment.yaml) :
+Add following environment variable to the deployment (file vault-deployment.yaml) :
 
 ```
         - name: VAULT_LOCAL_CONFIG
