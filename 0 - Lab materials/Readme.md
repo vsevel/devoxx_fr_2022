@@ -6,3 +6,8 @@
 
 Access the openshift console at `https://console-openshift-console.apps.cluster-4zmbp.4zmbp.sandbox688.opentlc.com`
 
+Log your openshift client in openshift cluster
+
+```
+oc login --username=user<userId> --password=openshift --server=https://api.cluster-4zmbp.4zmbp.sandbox688.opentlc.com:6443
+```
