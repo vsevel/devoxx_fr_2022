@@ -13,25 +13,38 @@ reference: https://hub.docker.com/_/vault
 Add following configuration to the deployment (file vault-deployment.yaml) :
 
 ```
-{"backend":
-  {"file":
-    {"path": "/vault/file"}
-  },
-  "default_lease_ttl": "168h",
-  "max_lease_ttl": "720h" ,
-  "disable_mlock": true,
-  "listener":
-  { "tcp" :
-    { "address" : "0.0.0.0:8200",
-    "tls_disable": 1}
-  }
-}
+        - name: VAULT_LOCAL_CONFIG
+          value: |
+            {"backend":
+              {"file":
+                {"path": "/vault/file"}
+              },
+              "default_lease_ttl": "168h",
+              "max_lease_ttl": "720h" ,
+              "disable_mlock": true,
+              "listener":
+              { "tcp" :
+                { "address" : "0.0.0.0:8200",
+                "tls_disable": 1}
+              }
+            }
 ```
 
 # Vault storage
 
 Add an empty-dir volume named vault-file-backend to the vault Deployment (file vault-deployment.yaml)
+
+```
+      - name: vault-file-backend
+        emptyDir: {}
+```
+
 and a respective volumemount in following path: /vault/file
+
+```
+        - name: vault-file-backend
+          mountPath: /vault/file
+```
 
 Reference: https://kubernetes.io/fr/docs/tasks/configure-pod-container/configure-volume-storage/
 
@@ -46,7 +59,17 @@ oc apply -f vault-deployment.yaml
 A service is needed to expose the pod. Complete vault-service.yml file by adding:
 
 - the port to expose (8200)
+
+```
+  - name: vault
+    port: 8200
+```
+
 - the label selector (to find the correct pod(s))
+
+```
+    app: vault
+```
 
 Reference: https://kubernetes.io/docs/concepts/services-networking/service/
 
