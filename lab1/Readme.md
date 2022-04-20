@@ -1,9 +1,3 @@
-# Create k8s namespace / openshift project:
-
-```
-oc new-project vault-<username>
-```
-
 # Vault configuration
 
 Vault local configuration can be injected via the environment variable VAULT_LOCAL_CONFIG
