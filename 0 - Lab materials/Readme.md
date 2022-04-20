@@ -33,4 +33,10 @@ Log your openshift client in openshift cluster
 oc login --username=<username> --password=<password> --server=https://api.cluster-4zmbp.4zmbp.sandbox688.opentlc.com:6443
 ```
 
+# Create k8s namespace / openshift project:
+
+```
+oc new-project vault-<username>
+```
+
 with `<username>` as `userX` (as provided on the login card).
